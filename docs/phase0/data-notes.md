@@ -38,6 +38,6 @@ pusht_cchi_v7_replay.zarr
 
 ```bash
 bash scripts/download_pusht.sh
-python -m mini_vla.data --data-dir data/pusht_cchi_v7_replay.zarr
+python -m mini_vla.data --data-dir data/pusht/pusht_cchi_v7_replay.zarr
 pytest -q
 ```

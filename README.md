@@ -44,7 +44,7 @@ Full plan: [docs/plan.md](docs/plan.md). Phase 0 data notes: [docs/phase0/data-n
 bash scripts/download_pusht.sh
 
 # inspect the dataset (shapes, episode count, normalization stats)
-python -m mini_vla.data --data-dir data/pusht_cchi_v7_replay.zarr
+python -m mini_vla.data --data-dir data/pusht/pusht_cchi_v7_replay.zarr
 
 # CPU unit tests (no GPU, no dataset download needed — synthetic zarr in tmp)
 pytest -q
