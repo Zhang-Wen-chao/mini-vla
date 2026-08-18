@@ -21,7 +21,8 @@ def action_l1(pred: torch.Tensor, target: torch.Tensor,
     """归一化空间下的动作 L1 误差（被 mask 的 padding 不计入）。"""
     pred, target, mask = _apply_mask(pred, target, mask)
     if mask is not None:
-        return float((pred - target).abs().sum() / mask.sum())
+        valid = mask.sum() * pred.shape[-1]
+        return float((pred - target).abs().sum() / valid)
     return float((pred - target).abs().mean())
 
 
@@ -30,7 +31,8 @@ def action_l2(pred: torch.Tensor, target: torch.Tensor,
     """归一化空间下的动作 L2 误差（被 mask 的 padding 不计入）。"""
     pred, target, mask = _apply_mask(pred, target, mask)
     if mask is not None:
-        return float(((pred - target) ** 2).sum() / mask.sum())
+        valid = mask.sum() * pred.shape[-1]
+        return float(((pred - target) ** 2).sum() / valid)
     return float(((pred - target) ** 2).mean())
 
 
