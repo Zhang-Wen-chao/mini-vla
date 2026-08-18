@@ -20,13 +20,11 @@ def synthetic_zarr(tmp_path):
     action = np.stack([np.arange(n, dtype=np.float32),
                        np.arange(n, dtype=np.float32) * 0.5], axis=1)
     data = root.require_group("data")
-    data.create_array("img", data=img, dtype="float32")
-    data.create_array("action", data=action, dtype="float32")
-    data.create_array("state", data=np.zeros((n, 5), dtype=np.float32),
-                      dtype="float32")
+    data.create_array("img", data=img)
+    data.create_array("action", data=action)
+    data.create_array("state", data=np.zeros((n, 5), dtype=np.float32))
     meta = root.require_group("meta")
-    meta.create_array("episode_ends", data=np.array([5, 9], dtype=np.int64),
-                      dtype="int64")
+    meta.create_array("episode_ends", data=np.array([5, 9], dtype=np.int64))
     return str(path)
 
 
