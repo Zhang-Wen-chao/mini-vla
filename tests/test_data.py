@@ -14,15 +14,19 @@ from mini_vla.metrics import action_l1, action_l2, chunk_consistency
 def synthetic_zarr(tmp_path):
     """两条 episode 的合成数据：episode 长度 6 与 4。"""
     path = tmp_path / "pusht_test.zarr"
-    root = zarr.open(str(path), mode="w")
+    root = zarr.open_group(str(path), mode="w")
     n = 10
     img = np.arange(n * 96 * 96 * 3, dtype=np.float32).reshape(n, 96, 96, 3) % 255
     action = np.stack([np.arange(n, dtype=np.float32),
                        np.arange(n, dtype=np.float32) * 0.5], axis=1)
-    root.create_dataset("data/img", data=img)
-    root.create_dataset("data/action", data=action)
-    root.create_dataset("data/state", data=np.zeros((n, 5), dtype=np.float32))
-    root.create_dataset("meta/episode_ends", data=np.array([5, 9], dtype=np.int64))
+    data = root.require_group("data")
+    data.create_array("img", data=img, dtype="float32")
+    data.create_array("action", data=action, dtype="float32")
+    data.create_array("state", data=np.zeros((n, 5), dtype=np.float32),
+                      dtype="float32")
+    meta = root.require_group("meta")
+    meta.create_array("episode_ends", data=np.array([5, 9], dtype=np.int64),
+                      dtype="int64")
     return str(path)
 
 
