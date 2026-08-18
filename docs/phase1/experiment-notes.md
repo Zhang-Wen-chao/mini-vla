@@ -207,11 +207,17 @@ observation horizon 设为 2。这样将得到完整的 To × Ta 2×2 对照：
 
 | observation horizon | action horizon 16 | action horizon 8 |
 | ---: | --- | --- |
-| 2 | 已完成：coverage 0.2674，success 0 | 运行中 |
+| 2 | 已完成：coverage 0.2674，success 0 | 已完成：coverage 0.2098，success 0 |
 | 4 | 已完成：coverage 0.1587，success 0 | 已完成：coverage 0.2185，success 0 |
 
-该对照用于分离 Ta=8 的效果是独立改善，还是仅与 To=4 耦合；其最终 checkpoint watcher 与
-其他作业相同，均只在 epoch_0050.pt 后运行固定 20-seed rollout。
+To=2/Ta=8 的最终 offline L1/L2 是 **0.1671 / 0.0515**，canonical coverage 为
+**0.2098**、success **0.0**。至此 2×2 矩阵完成：Ta 从 16 缩至 8 时，在 To=2 下
+coverage 降低 0.0577（0.2674 → 0.2098），在 To=4 下则提高 0.0598（0.1587 → 0.2185）。
+反之，To 从 2 增至 4 时，在 Ta=16 下 coverage 降低 0.1088，在 Ta=8 下只提高 0.0087。
+因此 Ta 与 To 存在明显交互，不能宣布“短 action chunk 普遍更好”或“长 observation history
+普遍更好”；四组均无 success，下一步仍应等待 200-epoch 时长对照，避免将训练预算不足错归因
+为结构选择。原始产物：[`proprio-to2-ta8-50e-metrics-20260818.jsonl`](results/proprio-to2-ta8-50e-metrics-20260818.jsonl)、
+[`proprio-to2-ta8-50e-rollout-canonical-legacy-20260818.json`](results/proprio-to2-ta8-50e-rollout-canonical-legacy-20260818.json)。
 
 EMA 与 cosine 均为新加入、默认关闭的训练开关；EMA 权重仅用于 validation、checkpoint 与
 rollout，原始模型仍被正常优化。首次 L20 回归验证为 **28 passed, 1 pygame warning**。
