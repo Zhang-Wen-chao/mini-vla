@@ -24,7 +24,8 @@ def synthetic_zarr(tmp_path):
     data.create_array("action", data=action)
     data.create_array("state", data=np.zeros((n, 5), dtype=np.float32))
     meta = root.require_group("meta")
-    meta.create_array("episode_ends", data=np.array([5, 9], dtype=np.int64))
+    # Diffusion Policy stores exclusive ends: [0, 6) and [6, 10).
+    meta.create_array("episode_ends", data=np.array([6, 10], dtype=np.int64))
     return str(path)
 
 
@@ -38,6 +39,7 @@ def test_shapes_and_ranges(synthetic_zarr):
     assert len(ds) > 0
     sample = ds[0]
     assert sample["obs"].shape == (2, 3, 96, 96)
+    assert sample["agent_pos"].shape == (2, 2)
     assert sample["action"].shape == (16, 2)
     assert sample["action_mask"].shape == (16,)
     lo, hi = ds.cfg.img_range
@@ -66,6 +68,21 @@ def test_action_padding_zeros(synthetic_zarr):
         assert (sample["action"][n_valid:] == 0).all()
 
 
+def test_action_tail_does_not_leak_into_next_episode(synthetic_zarr):
+    ds = PushTDataset(make_cfg(synthetic_zarr, obs_horizon=1, action_horizon=16))
+    last_start_of_first_episode = int(np.where(ds.starts == 5)[0][0])
+    sample = ds[last_start_of_first_episode]
+    assert sample["action_mask"].sum() == 1
+    assert torch.equal(sample["action"][0], torch.tensor([5.0, 2.5]))
+    assert (sample["action"][1:] == 0).all()
+
+
+def test_action_is_aligned_with_current_observation(synthetic_zarr):
+    ds = PushTDataset(make_cfg(synthetic_zarr, obs_horizon=1, action_horizon=2))
+    sample = ds[int(np.where(ds.starts == 2)[0][0])]
+    assert torch.equal(sample["action"], torch.tensor([[2.0, 1.0], [3.0, 1.5]]))
+
+
 def test_normalizer_roundtrip(synthetic_zarr):
     ds = PushTDataset(make_cfg(synthetic_zarr))
     norm = ds.action_normalizer
@@ -81,3 +98,11 @@ def test_metrics_known_values():
     assert action_l1(pred, target, mask) == pytest.approx(1.0)
     assert action_l2(pred, target, mask) == pytest.approx(1.0)
     assert chunk_consistency(torch.zeros(2, 3, 2)) == 0.0
+
+
+def test_metrics_accept_batched_action_mask():
+    pred = torch.zeros(2, 3, 2)
+    target = torch.ones(2, 3, 2)
+    mask = torch.tensor([[1.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
+    assert action_l1(pred, target, mask) == pytest.approx(1.0)
+    assert action_l2(pred, target, mask) == pytest.approx(1.0)

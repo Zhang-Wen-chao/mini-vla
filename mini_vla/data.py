@@ -2,6 +2,8 @@
 
 对齐 diffusion-policy 的接口约定：观测窗口 To 帧、动作分块 Ta 步；
 episode 起始处观测用"重复首帧"填充，结尾处动作用 0 填充并带 validity mask。
+``meta/episode_ends`` 遵循 diffusion-policy 约定，保存的是 exclusive end
+offset，因此最后一个值等于数据总步数。
 """
 
 from __future__ import annotations
@@ -39,8 +41,11 @@ class LinearNormalizer:
 class PushTDataset(torch.utils.data.Dataset):
     """从 PushT zarr 采样 (obs, action, action_mask) 三元组。
 
-    采样规则：样本起点 s 保证观测窗口 [s-To+1, s] 完整落在 episode 内；
-    动作块从 s+1 开始取 Ta 步，超出 episode 结尾的部分补 0、mask 置 0。
+    采样规则：样本起点 s 的观测窗口 [s-To+1, s] 在左侧按首帧 padding；
+    动作块与最近 observation 同时间对齐，从 s 开始取 Ta 步；这与
+    diffusion-policy 的 PushT ``SequenceSampler`` 对齐约定一致。超出
+    episode 结尾的部分补 0、mask 置 0。
+    ``episode_ends`` 是 exclusive。
     """
 
     def __init__(self, cfg: PushTConfig) -> None:
@@ -50,28 +55,31 @@ class PushTDataset(torch.utils.data.Dataset):
         ends = np.asarray(self.root["meta"]["episode_ends"], dtype=np.int64)
         if cfg.max_episodes > 0:
             ends = ends[: cfg.max_episodes]
-        self.episode_ends = ends
-        self.episode_starts = np.concatenate([[0], ends[:-1] + 1])
-
         self.img = self.root["data"]["img"]
+        self.state = self.root["data"]["state"]
         self.action = self.root["data"]["action"]
+        if len(ends) == 0 or ends[-1] > self.action.shape[0]:
+            raise ValueError("invalid exclusive episode_ends in zarr metadata")
+        self.episode_ends = ends
+        self.episode_starts = np.concatenate([[0], ends[:-1]])
         if self.img.shape[1] != cfg.img_size:
             raise ValueError(
                 f"img_size={cfg.img_size} 与数据 {self.img.shape[1]} 不符"
             )
 
         self.starts = self._build_starts()
-        self.action_normalizer = LinearNormalizer().fit(
-            np.asarray(self.action)
-        )
+        self.action_normalizer = LinearNormalizer().fit(np.asarray(self.action[: ends[-1]]))
 
     def _build_starts(self) -> np.ndarray:
         starts: list[int] = []
         for st, en in zip(self.episode_starts, self.episode_ends):
-            length = en - st + 1
-            if length < self.cfg.obs_horizon + 1:
+            length = en - st
+            if length < 1:
                 continue
-            last_start = en - self.cfg.obs_horizon
+            # Observation history is left-padded at an episode start; include
+            # every control step, including the final one, and mask the action
+            # chunk tail as needed.
+            last_start = en - 1
             starts.extend(range(int(st), int(last_start) + 1))
         return np.array(starts, dtype=np.int64)
 
@@ -84,17 +92,26 @@ class PushTDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         s = int(self.starts[index])
-        st, _ = self._episode_range_of(s)
+        st, en = self._episode_range_of(s)
         to, ta = self.cfg.obs_horizon, self.cfg.action_horizon
 
         obs_start = max(s - to + 1, st)
         obs = np.asarray(self.img[obs_start : s + 1])
+        agent_pos = np.asarray(self.state[obs_start : s + 1, :2], dtype=np.float32)
         if obs.shape[0] < to:
             obs = np.concatenate(
                 [np.repeat(obs[:1], to - obs.shape[0], axis=0), obs], axis=0
             )
+            agent_pos = np.concatenate(
+                [np.repeat(agent_pos[:1], to - agent_pos.shape[0], axis=0), agent_pos], axis=0
+            )
 
-        action = np.asarray(self.action[s + 1 : s + 1 + ta])
+        # NumPy/zarr slicing has no notion of episode boundaries.  Clamp the
+        # end explicitly: otherwise the tail of one demonstration would use
+        # actions from the next one, while its mask still claimed they were
+        # valid.
+        action_end = min(s + ta, en)
+        action = np.asarray(self.action[s:action_end])
         mask = np.zeros(ta, dtype=np.float32)
         mask[: action.shape[0]] = 1.0
         if action.shape[0] < ta:
@@ -110,6 +127,10 @@ class PushTDataset(torch.utils.data.Dataset):
 
         return {
             "obs": torch.from_numpy(obs),
+            # PushT's native proprioception: absolute agent position in the
+            # same 512x512 workspace as the action.  Map to [-1, 1] so its
+            # scale matches the normalized image conditioning.
+            "agent_pos": torch.from_numpy(agent_pos / 256.0 - 1.0),
             "action": torch.from_numpy(action),
             "action_mask": torch.from_numpy(mask),
         }

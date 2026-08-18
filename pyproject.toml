@@ -16,6 +16,14 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest"]
+# The simulator is deliberately optional: training and offline evaluation only
+# require torch/numpy/zarr.  These pins reproduce the official PushT physics
+# and off-screen renderer on the L20 Python 3.12 image.
+rollout = [
+    "pygame==2.6.1",
+    "pymunk==6.9.0",
+    "shapely==2.0.6",
+]
 
 [tool.setuptools.packages.find]
 include = ["mini_vla*"]

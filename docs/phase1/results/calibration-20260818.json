@@ -1,0 +1,26 @@
+{
+  "data_dir": "data/pusht/pusht_cchi_v7_replay.zarr",
+  "max_samples": 1024,
+  "seed": 0,
+  "replay": {
+    "transition_samples": 1024,
+    "action_min": 18.0,
+    "action_max": 509.0,
+    "mean_target_distance_before": 23.138915448367044,
+    "mean_target_distance_after": 13.849317041774183,
+    "fraction_target_distance_decreases": 0.99609375
+  },
+  "simulator": {
+    "simulator_target_distance_before": 206.15528128088303,
+    "simulator_target_distance_after": 145.20098108907646,
+    "simulator_target_moves_agent_closer": true,
+    "exact_goal_coverage": 1.0
+  },
+  "checks": {
+    "replay_actions_within_workspace": true,
+    "replay_actions_move_agent_toward_target": true,
+    "simulator_target_coordinate_semantics": true,
+    "simulator_exact_goal_coverage": true
+  },
+  "passed": true
+}

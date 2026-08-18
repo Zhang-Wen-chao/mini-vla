@@ -11,7 +11,11 @@ import torch
 
 def _apply_mask(pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor | None):
     if mask is not None:
-        mask = mask.to(pred.dtype).reshape(-1, 1).to(pred.device)
+        if mask.shape != pred.shape[:-1]:
+            raise ValueError(
+                f"mask shape {tuple(mask.shape)} must match action shape {tuple(pred.shape[:-1])}"
+            )
+        mask = mask.to(pred.device, pred.dtype).unsqueeze(-1)
         pred, target = pred * mask, target * mask
     return pred, target, mask
 
@@ -21,7 +25,7 @@ def action_l1(pred: torch.Tensor, target: torch.Tensor,
     """归一化空间下的动作 L1 误差（被 mask 的 padding 不计入）。"""
     pred, target, mask = _apply_mask(pred, target, mask)
     if mask is not None:
-        valid = mask.sum() * pred.shape[-1]
+        valid = (mask.sum() * pred.shape[-1]).clamp_min(1)
         return float((pred - target).abs().sum() / valid)
     return float((pred - target).abs().mean())
 
@@ -31,7 +35,7 @@ def action_l2(pred: torch.Tensor, target: torch.Tensor,
     """归一化空间下的动作 L2 误差（被 mask 的 padding 不计入）。"""
     pred, target, mask = _apply_mask(pred, target, mask)
     if mask is not None:
-        valid = mask.sum() * pred.shape[-1]
+        valid = (mask.sum() * pred.shape[-1]).clamp_min(1)
         return float(((pred - target) ** 2).sum() / valid)
     return float(((pred - target) ** 2).mean())
 

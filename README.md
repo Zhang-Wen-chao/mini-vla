@@ -37,7 +37,7 @@ PushT dataset (zarr: 96x96 RGB obs + 2D end-effector actions)
 
 Full plan: [docs/plan.md](docs/plan.md). Phase 0 data notes: [docs/phase0/data-notes.md](docs/phase0/data-notes.md).
 
-## Quickstart (Phase 0)
+## Quickstart
 
 ```bash
 # download + extract the official PushT zarr (~1.5 GB)
@@ -49,6 +49,50 @@ python -m mini_vla.data --data-dir data/pusht/pusht_cchi_v7_replay.zarr
 # CPU unit tests (no GPU, no dataset download needed — synthetic zarr in tmp)
 pytest -q
 ```
+
+### Phase 1: train a flow-matching action head
+
+The action head conditions a CNN plus the PushT-native agent XY proprioception
+on two observations and learns the
+straight flow ``x_t=(1-t)a0+t*a1`` with velocity target ``a1-a0``. The CNN
+keeps a 4x4 spatial feature grid before conditioning the action head, since
+PushT requires mapping image locations to absolute action coordinates. Padded
+action tails are excluded from its loss. It reports held-out velocity loss and
+sampled normalized-action L1/L2 once per epoch, and writes a checkpoint with
+the action normalization statistics. It writes both ``last.pt`` and a numbered
+``epoch_XXXX.pt`` checkpoint after every epoch so long GPU runs are auditable.
+
+```bash
+python -m mini_vla.train \
+  --data-dir data/pusht/pusht_cchi_v7_replay.zarr \
+  --output-dir outputs/phase1 --epochs 50 --batch-size 128 --sample-steps 8 \
+  --obs-horizon 2
+```
+
+For a CPU wiring smoke test, use a small synthetic zarr and pass ``--device
+cpu --num-workers 0``. GPU results and simulator rollout coverage are recorded
+in the Phase 1 experiment notes once the L20 run completes.
+
+### Phase 1: rollout coverage (optional evaluator)
+
+The core package does not depend on a simulator. Install the pinned optional
+extra to evaluate the learned policy in the headless PushT physics environment
+(the official task's coverage definition: T/goal intersection area divided by
+goal area; success is coverage > 0.95):
+
+```bash
+pip install -e ".[rollout]"
+python -m mini_vla.rollout \
+  --checkpoint outputs/phase1/last.pt --episodes 20 --seed 10000 \
+  --execute-steps 8 --sample-steps 8 --legacy \
+  --output outputs/phase1/rollout.json
+```
+
+Each inference generates a 16-action chunk and executes its first eight actions
+before re-observing. The JSON result records the mean maximum coverage, success
+rate, environment seeds, action execution horizon, Euler steps, and state
+assignment mode. The official image-PushT benchmark uses `legacy=true`, which is
+also this evaluator's default.
 
 ## References
 

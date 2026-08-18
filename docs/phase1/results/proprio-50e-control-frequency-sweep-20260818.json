@@ -1,0 +1,411 @@
+{
+  "checkpoint": "outputs/phase1-proprio-50e-20260818/last.pt",
+  "comparison": "control_replanning_frequency",
+  "execute_steps_list": [
+    1,
+    4,
+    8
+  ],
+  "episodes": 20,
+  "seed_start": 10000,
+  "max_steps": 200,
+  "euler_steps": 8,
+  "by_execute_steps": {
+    "1": {
+      "checkpoint": "outputs/phase1-proprio-50e-20260818/last.pt",
+      "episodes": 20,
+      "seed_start": 10000,
+      "max_steps": 200,
+      "execute_steps": 1,
+      "euler_steps": 8,
+      "mean_max_coverage": 0.1113260940590981,
+      "success_rate": 0.0,
+      "episodes_detail": [
+        {
+          "seed": 10000,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10001,
+          "steps": 200,
+          "max_coverage": 0.05339327454707654,
+          "success": false
+        },
+        {
+          "seed": 10002,
+          "steps": 200,
+          "max_coverage": 0.010523100785098976,
+          "success": false
+        },
+        {
+          "seed": 10003,
+          "steps": 200,
+          "max_coverage": 0.39001835750739183,
+          "success": false
+        },
+        {
+          "seed": 10004,
+          "steps": 200,
+          "max_coverage": 0.0016052817025144666,
+          "success": false
+        },
+        {
+          "seed": 10005,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10006,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10007,
+          "steps": 200,
+          "max_coverage": 0.26706562089899727,
+          "success": false
+        },
+        {
+          "seed": 10008,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10009,
+          "steps": 200,
+          "max_coverage": 0.0004598878845988742,
+          "success": false
+        },
+        {
+          "seed": 10010,
+          "steps": 200,
+          "max_coverage": 0.47616892061087157,
+          "success": false
+        },
+        {
+          "seed": 10011,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10012,
+          "steps": 200,
+          "max_coverage": 0.28970164939219245,
+          "success": false
+        },
+        {
+          "seed": 10013,
+          "steps": 200,
+          "max_coverage": 0.23032445789068148,
+          "success": false
+        },
+        {
+          "seed": 10014,
+          "steps": 200,
+          "max_coverage": 0.27310918173661947,
+          "success": false
+        },
+        {
+          "seed": 10015,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10016,
+          "steps": 200,
+          "max_coverage": 0.08558376297834996,
+          "success": false
+        },
+        {
+          "seed": 10017,
+          "steps": 200,
+          "max_coverage": 0.10683969462863889,
+          "success": false
+        },
+        {
+          "seed": 10018,
+          "steps": 200,
+          "max_coverage": 0.04172869061893026,
+          "success": false
+        },
+        {
+          "seed": 10019,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        }
+      ]
+    },
+    "4": {
+      "checkpoint": "outputs/phase1-proprio-50e-20260818/last.pt",
+      "episodes": 20,
+      "seed_start": 10000,
+      "max_steps": 200,
+      "execute_steps": 4,
+      "euler_steps": 8,
+      "mean_max_coverage": 0.1832744350983358,
+      "success_rate": 0.0,
+      "episodes_detail": [
+        {
+          "seed": 10000,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10001,
+          "steps": 200,
+          "max_coverage": 0.05339327454707654,
+          "success": false
+        },
+        {
+          "seed": 10002,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10003,
+          "steps": 200,
+          "max_coverage": 0.43202286551025815,
+          "success": false
+        },
+        {
+          "seed": 10004,
+          "steps": 200,
+          "max_coverage": 0.0016052817025144666,
+          "success": false
+        },
+        {
+          "seed": 10005,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10006,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10007,
+          "steps": 200,
+          "max_coverage": 0.4845379912372659,
+          "success": false
+        },
+        {
+          "seed": 10008,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10009,
+          "steps": 200,
+          "max_coverage": 0.10695235387774799,
+          "success": false
+        },
+        {
+          "seed": 10010,
+          "steps": 200,
+          "max_coverage": 0.4331642892731655,
+          "success": false
+        },
+        {
+          "seed": 10011,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10012,
+          "steps": 200,
+          "max_coverage": 0.36162033150680534,
+          "success": false
+        },
+        {
+          "seed": 10013,
+          "steps": 200,
+          "max_coverage": 0.4606851521718083,
+          "success": false
+        },
+        {
+          "seed": 10014,
+          "steps": 200,
+          "max_coverage": 0.2731091817366193,
+          "success": false
+        },
+        {
+          "seed": 10015,
+          "steps": 200,
+          "max_coverage": 0.13655722647661092,
+          "success": false
+        },
+        {
+          "seed": 10016,
+          "steps": 200,
+          "max_coverage": 0.3628545556800717,
+          "success": false
+        },
+        {
+          "seed": 10017,
+          "steps": 200,
+          "max_coverage": 0.1479778371187308,
+          "success": false
+        },
+        {
+          "seed": 10018,
+          "steps": 200,
+          "max_coverage": 0.41100836112804123,
+          "success": false
+        },
+        {
+          "seed": 10019,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        }
+      ]
+    },
+    "8": {
+      "checkpoint": "outputs/phase1-proprio-50e-20260818/last.pt",
+      "episodes": 20,
+      "seed_start": 10000,
+      "max_steps": 200,
+      "execute_steps": 8,
+      "euler_steps": 8,
+      "mean_max_coverage": 0.22791351762060227,
+      "success_rate": 0.0,
+      "episodes_detail": [
+        {
+          "seed": 10000,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10001,
+          "steps": 200,
+          "max_coverage": 0.05339327454707654,
+          "success": false
+        },
+        {
+          "seed": 10002,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10003,
+          "steps": 200,
+          "max_coverage": 0.49933185271621267,
+          "success": false
+        },
+        {
+          "seed": 10004,
+          "steps": 200,
+          "max_coverage": 0.0016052817025144666,
+          "success": false
+        },
+        {
+          "seed": 10005,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10006,
+          "steps": 200,
+          "max_coverage": 0.22770630766335753,
+          "success": false
+        },
+        {
+          "seed": 10007,
+          "steps": 200,
+          "max_coverage": 0.5767586855541189,
+          "success": false
+        },
+        {
+          "seed": 10008,
+          "steps": 200,
+          "max_coverage": 0.006610542050879099,
+          "success": false
+        },
+        {
+          "seed": 10009,
+          "steps": 200,
+          "max_coverage": 0.032763207826493376,
+          "success": false
+        },
+        {
+          "seed": 10010,
+          "steps": 200,
+          "max_coverage": 0.4331642892731655,
+          "success": false
+        },
+        {
+          "seed": 10011,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10012,
+          "steps": 200,
+          "max_coverage": 0.24030130938576255,
+          "success": false
+        },
+        {
+          "seed": 10013,
+          "steps": 200,
+          "max_coverage": 0.3741525034313287,
+          "success": false
+        },
+        {
+          "seed": 10014,
+          "steps": 200,
+          "max_coverage": 0.31965136241322617,
+          "success": false
+        },
+        {
+          "seed": 10015,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10016,
+          "steps": 200,
+          "max_coverage": 0.6755420993676684,
+          "success": false
+        },
+        {
+          "seed": 10017,
+          "steps": 200,
+          "max_coverage": 0.6735644090409467,
+          "success": false
+        },
+        {
+          "seed": 10018,
+          "steps": 200,
+          "max_coverage": 0.0,
+          "success": false
+        },
+        {
+          "seed": 10019,
+          "steps": 200,
+          "max_coverage": 0.44372522743929543,
+          "success": false
+        }
+      ]
+    }
+  }
+}
