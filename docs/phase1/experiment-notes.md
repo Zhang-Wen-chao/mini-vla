@@ -186,7 +186,7 @@ RGB crop/augmentation、EMA、cosine learning-rate schedule 及远长于 50 epoc
 再从其中选择**一项**高信息量变量（优先是 EMA 或学习率 schedule 的训练稳定化；编码器升级
 应另作单独架构对照），并先增加对应测试和文档说明。
 
-### 并行的单变量矩阵（2026-08-18，运行中）
+### 并行的单变量矩阵（2026-08-18，50-epoch 对照已完成）
 
 L20 的四张 L20 均为空闲后，GPU 0--3 分别启动了互不共享输出目录的受控训练；每一项都
 有独立 watcher，只会等各自的最终 checkpoint 出现后，按 `legacy=true`、固定 20 个
@@ -235,3 +235,13 @@ EMA 与 cosine 的最终 canonical 结果现已完成。EMA 的最终 offline L1
 [`proprio-to4-ta16-ema-50e-rollout-canonical-legacy-20260818.json`](results/proprio-to4-ta16-ema-50e-rollout-canonical-legacy-20260818.json)、
 [`proprio-to4-ta16-cosine-50e-metrics-20260818.jsonl`](results/proprio-to4-ta16-cosine-50e-metrics-20260818.jsonl)、
 [`proprio-to4-ta16-cosine-50e-rollout-canonical-legacy-20260818.json`](results/proprio-to4-ta16-cosine-50e-rollout-canonical-legacy-20260818.json)。
+
+### 200-epoch 时长对照：运行快照（2026-08-18 18:47 CST）
+
+GPU 3 上的 `phase1-proprio-to4-ta16-200e-20260818` 仍在运行，训练进程和其 DataLoader
+worker 均存活。当前已写入 **epoch 90 / 200**；该 epoch 的 train flow loss 为 **0.1312**，
+Gaussian-Euler validation sampled L1/L2 为 **0.1135 / 0.0215**。输出目录此时只有会随 epoch
+覆盖的 `last.pt` 与 `metrics.jsonl`，尚无 `epoch_0200.pt` 或 `rollout.json`。因此这只是用于
+恢复和监控的中间快照，不能和完成的 50-epoch rollout 作策略优劣比较，也不能据此宣布
+“训练时长解决了零 success”。训练结束后必须固定沿用 `legacy=true`、20 个 seed、200 control
+steps、`execute_steps=8` 的 canonical rollout，并将最终 metrics/JSON 归档后才更新结论。

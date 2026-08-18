@@ -94,6 +94,31 @@ rate, environment seeds, action execution horizon, Euler steps, and state
 assignment mode. The official image-PushT benchmark uses `legacy=true`, which is
 also this evaluator's default.
 
+### Phase 1 evidence so far
+
+Phase 1 has 28 focused tests covering data boundaries, flow loss, sampling, checkpoints,
+calibration, and rollout semantics. Before interpreting policy results, the headless evaluator
+was calibrated against replay: 99.61% of 1,024 sampled recorded actions move the agent closer
+to their absolute XY target; 128 one-step replay comparisons give mean agent/block position
+errors of 2.45/0.86 pixels; an exact goal placement has coverage 1.0.
+
+All policy conclusions use the official-compatible legacy=true evaluator, 20 fixed seeds, 200
+control steps, and execute_steps=8. The table below is evidence, not a task-success claim:
+
+| observation horizon | action horizon 16 | action horizon 8 |
+| ---: | ---: | ---: |
+| 2 | coverage 0.2674, success 0 | coverage 0.2098, success 0 |
+| 4 | coverage 0.1587, success 0 | coverage 0.2185, success 0 |
+
+The result shows an interaction between observation and action horizon, and it shows that lower
+offline action L1/L2 does not guarantee a better closed-loop policy. EMA (coverage 0.1207) and
+cosine learning-rate decay (0.2207) did not produce a successful trajectory. The final controlled
+duration experiment (To=4/Ta=16, 200 epochs) is still running on the L20: its 2026-08-18 18:47
+CST snapshot is epoch 90/200 with offline sampled L1/L2 0.1135/0.0215. It has no final
+checkpoint or rollout yet, so those intermediate numbers are not a policy conclusion. Phase 1
+remains incomplete until a rollout success criterion is met or the remaining evidence points to
+the next architecture change.
+
 ## References
 
 - Diffusion Policy (PushT task, dataset, benchmark): Chi et al., arXiv:2303.04137
