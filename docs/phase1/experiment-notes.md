@@ -198,7 +198,7 @@ batch 128、AdamW 3e-4、8 Euler steps、To=4、Ta=16；例外在表中明确列
 | 0 | `phase1-proprio-to4-ta8-50e-20260818` | Ta=16 → 8（完成） | 50 epochs | coverage 0.2185 / success 0；相较 To=4/Ta=16 改善但未超过 To=2 基线 |
 | 1 | `phase1-proprio-to4-ta16-ema-50e-20260818` | checkpoint/评测采用 EMA（decay 0.999） | 50 epochs | 完成：coverage 0.1207 / success 0，未改善 |
 | 2 | `phase1-proprio-to4-ta16-cosine-50e-20260818` | cosine LR（3e-4 → 0） | 50 epochs | 完成：coverage 0.2207 / success 0，部分回升但不超过 To=2 基线 |
-| 3 | `phase1-proprio-to4-ta16-200e-20260818` | epochs=50 → 200 | 200 epochs | 排除训练步数仍不足 |
+| 3 | `phase1-proprio-to4-ta16-200e-20260818` | epochs=50 → 200 | 200 epochs | 完成：coverage 0.1407 / success 0；更低离线误差未转化为闭环改善 |
 
 GPU 0 在 To=4/Ta=8 完成并释放后，补充启动了缺失的 To=2/Ta=8 组合：
 `phase1-proprio-to2-ta8-50e-20260818`。它固定 50 epochs、batch 128、hidden 256、
@@ -215,8 +215,8 @@ To=2/Ta=8 的最终 offline L1/L2 是 **0.1671 / 0.0515**，canonical coverage �
 coverage 降低 0.0577（0.2674 → 0.2098），在 To=4 下则提高 0.0598（0.1587 → 0.2185）。
 反之，To 从 2 增至 4 时，在 Ta=16 下 coverage 降低 0.1088，在 Ta=8 下只提高 0.0087。
 因此 Ta 与 To 存在明显交互，不能宣布“短 action chunk 普遍更好”或“长 observation history
-普遍更好”；四组均无 success，下一步仍应等待 200-epoch 时长对照，避免将训练预算不足错归因
-为结构选择。原始产物：[`proprio-to2-ta8-50e-metrics-20260818.jsonl`](results/proprio-to2-ta8-50e-metrics-20260818.jsonl)、
+普遍更好”；四组均无 success。200-epoch 时长对照现已完成，排除了“仅仅训练不够久”
+这一解释。原始产物：[`proprio-to2-ta8-50e-metrics-20260818.jsonl`](results/proprio-to2-ta8-50e-metrics-20260818.jsonl)、
 [`proprio-to2-ta8-50e-rollout-canonical-legacy-20260818.json`](results/proprio-to2-ta8-50e-rollout-canonical-legacy-20260818.json)。
 
 EMA 与 cosine 均为新加入、默认关闭的训练开关；EMA 权重仅用于 validation、checkpoint 与
@@ -236,12 +236,15 @@ EMA 与 cosine 的最终 canonical 结果现已完成。EMA 的最终 offline L1
 [`proprio-to4-ta16-cosine-50e-metrics-20260818.jsonl`](results/proprio-to4-ta16-cosine-50e-metrics-20260818.jsonl)、
 [`proprio-to4-ta16-cosine-50e-rollout-canonical-legacy-20260818.json`](results/proprio-to4-ta16-cosine-50e-rollout-canonical-legacy-20260818.json)。
 
-### 200-epoch 时长对照：运行快照（2026-08-18 18:47 CST）
+### 200-epoch 时长对照：完成（2026-08-18）
 
-GPU 3 上的 `phase1-proprio-to4-ta16-200e-20260818` 仍在运行，训练进程和其 DataLoader
-worker 均存活。当前已写入 **epoch 90 / 200**；该 epoch 的 train flow loss 为 **0.1312**，
-Gaussian-Euler validation sampled L1/L2 为 **0.1135 / 0.0215**。输出目录此时只有会随 epoch
-覆盖的 `last.pt` 与 `metrics.jsonl`，尚无 `epoch_0200.pt` 或 `rollout.json`。因此这只是用于
-恢复和监控的中间快照，不能和完成的 50-epoch rollout 作策略优劣比较，也不能据此宣布
-“训练时长解决了零 success”。训练结束后必须固定沿用 `legacy=true`、20 个 seed、200 control
-steps、`execute_steps=8` 的 canonical rollout，并将最终 metrics/JSON 归档后才更新结论。
+GPU 3 的 `phase1-proprio-to4-ta16-200e-20260818` 已完成 **200 / 200 epochs**。它与
+To=4/Ta=16 的 50-epoch 固定-LR 基线只差训练预算，二者均采用空间 CNN + agent XY、hidden
+256、batch 128、AdamW 3e-4、8 Euler steps，并以 `legacy=true`、固定 20 个 seed、200
+control steps、`execute_steps=8` 评测。最终离线 sampled L1/L2 从 **0.1651 / 0.0468** 降至
+**0.0964 / 0.0152**，但 canonical mean max coverage 从 **0.1587** 降至 **0.1407**，success
+仍为 **0.0**。因此，在此模型与固定学习率下，增加四倍训练 epoch 没有改善闭环结果；它排除了
+“仅因训练不足而零成功”的解释，且再次表明不能以 action L1/L2 选择闭环策略。完整的每 epoch
+metrics 与最终 rollout 已归档为
+[`proprio-to4-ta16-200e-metrics-20260818.jsonl`](results/proprio-to4-ta16-200e-metrics-20260818.jsonl)
+和 [`proprio-to4-ta16-200e-rollout-canonical-legacy-20260818.json`](results/proprio-to4-ta16-200e-rollout-canonical-legacy-20260818.json)。

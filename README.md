@@ -112,12 +112,12 @@ control steps, and execute_steps=8. The table below is evidence, not a task-succ
 
 The result shows an interaction between observation and action horizon, and it shows that lower
 offline action L1/L2 does not guarantee a better closed-loop policy. EMA (coverage 0.1207) and
-cosine learning-rate decay (0.2207) did not produce a successful trajectory. The final controlled
-duration experiment (To=4/Ta=16, 200 epochs) is still running on the L20: its 2026-08-18 18:47
-CST snapshot is epoch 90/200 with offline sampled L1/L2 0.1135/0.0215. It has no final
-checkpoint or rollout yet, so those intermediate numbers are not a policy conclusion. Phase 1
-remains incomplete until a rollout success criterion is met or the remaining evidence points to
-the next architecture change.
+cosine learning-rate decay (0.2207) did not produce a successful trajectory. The final duration
+control (To=4/Ta=16, 200 epochs) reduced offline sampled L1/L2 from 0.1651/0.0468 at 50
+epochs to 0.0964/0.0152, yet its canonical coverage fell from 0.1587 to 0.1407 and success
+remained zero. All completed controlled comparisons therefore reinforce the same conclusion:
+lower offline action error is not a closed-loop success criterion. Phase 1 remains incomplete
+because no configuration has met the rollout success criterion.
 
 ## References
 

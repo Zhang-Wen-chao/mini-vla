@@ -1,0 +1,133 @@
+{
+  "checkpoint": "outputs/phase1-proprio-to4-ta16-200e-20260818/epoch_0200.pt",
+  "episodes": 20,
+  "seed_start": 10000,
+  "max_steps": 200,
+  "execute_steps": 8,
+  "euler_steps": 8,
+  "legacy": true,
+  "mean_max_coverage": 0.14068849800288824,
+  "success_rate": 0.0,
+  "episodes_detail": [
+    {
+      "seed": 10000,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10001,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10002,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10003,
+      "steps": 200,
+      "max_coverage": 0.030279079489806956,
+      "success": false
+    },
+    {
+      "seed": 10004,
+      "steps": 200,
+      "max_coverage": 0.05088223047121061,
+      "success": false
+    },
+    {
+      "seed": 10005,
+      "steps": 200,
+      "max_coverage": 0.48836050044807167,
+      "success": false
+    },
+    {
+      "seed": 10006,
+      "steps": 200,
+      "max_coverage": 0.430450848823433,
+      "success": false
+    },
+    {
+      "seed": 10007,
+      "steps": 200,
+      "max_coverage": 0.004870606851310588,
+      "success": false
+    },
+    {
+      "seed": 10008,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10009,
+      "steps": 200,
+      "max_coverage": 0.00024160909155115877,
+      "success": false
+    },
+    {
+      "seed": 10010,
+      "steps": 200,
+      "max_coverage": 0.5968932412891116,
+      "success": false
+    },
+    {
+      "seed": 10011,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10012,
+      "steps": 200,
+      "max_coverage": 0.0009177260507543793,
+      "success": false
+    },
+    {
+      "seed": 10013,
+      "steps": 200,
+      "max_coverage": 0.07967774962915583,
+      "success": false
+    },
+    {
+      "seed": 10014,
+      "steps": 200,
+      "max_coverage": 0.15607261597279767,
+      "success": false
+    },
+    {
+      "seed": 10015,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10016,
+      "steps": 200,
+      "max_coverage": 0.6125755935010934,
+      "success": false
+    },
+    {
+      "seed": 10017,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    },
+    {
+      "seed": 10018,
+      "steps": 200,
+      "max_coverage": 0.3625481584394679,
+      "success": false
+    },
+    {
+      "seed": 10019,
+      "steps": 200,
+      "max_coverage": 0.0,
+      "success": false
+    }
+  ]
+}
